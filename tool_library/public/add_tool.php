@@ -30,12 +30,11 @@ $folder = "uploads/" . time() . "_" . $photo;
 move_uploaded_file($tmp,$folder);
 
 /* Insert */
+$status = "available";
 
 $sql = "INSERT INTO tools
 (owner_id,tool_name,category,description,price_per_day,photo,availability_status)
 VALUES (?,?,?,?,?,?,?)";
-
-$status = "available";
 
 $stmt = $conn->prepare($sql);
 

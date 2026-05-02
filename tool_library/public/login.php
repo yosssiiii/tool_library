@@ -2,7 +2,7 @@
 session_start();
 
 require_once("../config/Database.php");
-require_once("../models/User.php");
+require_once("../models/user.php");
 
 $db = new Database();
 $conn = $db->connect();

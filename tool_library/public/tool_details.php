@@ -61,7 +61,7 @@ if (!$tool) {
         <div class="col-md-6 mb-4">
             <div class="details-card text-center">
                 <?php 
-                    $image = !empty($tool['photo']) ? "uploads/".$tool['photo'] : "https://via.placeholder.com/500?text=No+Image";
+                    $image = !empty($tool['photo']) ? "".$tool['photo'] : "https://via.placeholder.com/500?text=No+Image";
                 ?>
                 <img src="<?php echo $image; ?>" class="tool-main-img" alt="Tool Image">
             </div>
@@ -83,7 +83,7 @@ if (!$tool) {
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="price-badge">
-                        $<?php echo number_format($tool['price_per_hour'] ?? 0, 2); ?> <span class="small text-muted" style="font-size: 1rem;">/ hr</span>
+                        $<?php echo number_format($tool['price_per_day'] ?? 0, 2); ?> <span class="small text-muted" style="font-size: 1rem;">/ day</span>
                     </div>
                     <span class="badge bg-success px-3 py-2">Available</span>
                 </div>
@@ -94,7 +94,7 @@ if (!$tool) {
                     <p class="mb-0 text-muted small"><i class="fa fa-envelope"></i> <?php echo htmlspecialchars($tool['lender_email']); ?></p>
                 </div>
 
-                <form action="reserve.php" method="POST">
+                <form action="reserve.php" method="GET">
                     <input type="hidden" name="tool_id" value="<?php echo $tool['tool_id']; ?>">
                     <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">
                         <i class="fa fa-calendar-check"></i> Request Reservation

@@ -87,7 +87,7 @@ $result = $conn->query($sql);
                             <div class="card tool-card h-100">
                                 <div class="tool-img-container">
                                     <?php 
-                                        $image = !empty($row['photo']) ? "uploads/".$row['photo'] : "https://via.placeholder.com/200?text=No+Image";
+                                        $image = !empty($row['photo']) ? "".$row['photo'] : "https://via.placeholder.com/200?text=No+Image";
                                         ?>
                                     <img src="<?php echo $image; ?>" class="tool-img" alt="Tool Image">
                                 </div>
@@ -97,7 +97,7 @@ $result = $conn->query($sql);
                                     
                                     <span class="badge bg-success-subtle text-success status-badge mb-2">In Stock Now</span>
                                     
-                                    <div class="price-text mb-1">$<?php echo number_format($row['price_per_hour'], 2); ?> <span class="small text-muted" style="font-size: 0.7rem;">per loan</span></div>
+                                    <div class="price-text mb-1">$<?php echo number_format($row['price_per_day'], 2); ?> <span class="small text-muted" style="font-size: 0.7rem;">per loan</span></div>
                                     
                                     <div class="lender-name mb-3">
                                         <i class="fa fa-user-circle me-1"></i> Lender: <strong><?php echo htmlspecialchars($row['lender_name']); ?></strong>

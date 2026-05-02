@@ -1,43 +1,68 @@
 <?php
 session_start();
-
 require_once("../config/Database.php");
-require_once("../models/payment.php");
 
 $db = new Database();
 $conn = $db->connect();
 
-$payment = new Payment($conn);
+$id = $_GET['id'];
 
-$reservation_id = $_GET['reservation_id'];
-$amount = $_GET['amount'];
+$sql = "SELECT reservations.*, tools.tool_name 
+        FROM reservations
+        JOIN tools ON reservations.tool_id = tools.tool_id
+        WHERE reservation_id=?";
 
-$deposit = $amount * 0.30;
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i",$id);
+$stmt->execute();
+$res = $stmt->get_result()->fetch_assoc();
 
-if(isset($_POST['pay'])){
-
-$payment->makePayment(
-$reservation_id,
-$amount,
-$deposit
-);
-
-echo "Payment Successful";
-}
+$total = $res['total_price'] + $res['deposit_amount'];
 ?>
 
-<h2>Payment Page</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payment</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-Rental Amount:
-<?php echo $amount; ?><br>
+<body class="bg-light">
 
-Deposit:
-<?php echo $deposit; ?><br><br>
+<div class="container py-5">
 
-<form method="POST">
+<div class="card p-4 shadow">
 
-<button name="pay">
+<h3 class="mb-4">Payment for <?php echo $res['tool_name']; ?></h3>
+
+<p>Rental Price: <b>$<?php echo $res['total_price']; ?></b></p>
+<p>Deposit: <b>$<?php echo $res['deposit_amount']; ?></b></p>
+
+<hr>
+
+<h4>Total: $<?php echo $total; ?></h4>
+
+<form action="confirm_payment.php" method="POST">
+
+<input type="hidden" name="id" value="<?php echo $id; ?>">
+
+<!-- Fake Card UI -->
+
+<input class="form-control mb-2" placeholder="Card Number" required>
+
+<input class="form-control mb-2" placeholder="Expiry Date" required>
+
+<input class="form-control mb-2" placeholder="CVV" required>
+
+<button class="btn btn-success w-100 mt-3">
 Pay Now
 </button>
 
 </form>
+
+</div>
+
+</div>
+
+</body>
+</html>

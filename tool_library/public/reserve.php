@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("../config/Database.php");
-require_once("../models/Tool.php"); // استدعاء موديل الأدوات
+require_once("../models/tool.php"); // استدعاء موديل الأدوات
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -38,12 +38,12 @@ if (!$tool) {
         <div class="col-md-6">
             <div class="card shadow p-4 border-0">
                 <h3 class="text-primary">Reserve: <?php echo htmlspecialchars($tool['tool_name']); ?></h3>
-                <p class="text-muted">Rate: $<?php echo htmlspecialchars($tool['price'] ?? '0.00'); ?> / day</p>
+                <p class="text-muted">Rate: $<?php echo htmlspecialchars($tool['price_per_day'] ?? '0.00'); ?> / day</p>
                 <hr>
                 
                 <form action="process_reservation.php" method="POST">
-                    <input type="hidden" name="tool_id" value="<?php echo $t_id; ?>">
-                    <input type="hidden" name="price" value="<?php echo $tool['price']; ?>">
+                    <input type="hidden" name="tool_id" value="<?php echo $tool_id; ?>">
+                    <input type="hidden" name="price_per_day" value="<?php echo $tool['price_per_day']; ?>">
                     
                     <div class="mb-3">
                         <label class="form-label">Start Date</label>

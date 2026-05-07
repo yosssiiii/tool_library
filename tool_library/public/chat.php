@@ -16,20 +16,23 @@ $conn = $db->connect();
 $msgModel = new Message($conn);
 $userModel = new User($conn);
 
-// جلب بيانات المستلم
+// جلب ID
 $receiver_id = isset($_GET['user']) ? intval($_GET['user']) : 0;
 
-if($receiver_id == 0){
-    // إذا لم يتم تحديد مستخدم، حوله للداشبورد أو لصفحة قائمة المستخدمين
-    header("Location: dashboard.php"); 
+// تحقق
+if($receiver_id <= 0){
+    header("Location: dashboard.php");
     exit();
 }
 
+// هات بيانات اليوزر
 $receiverData = $userModel->getUser($receiver_id);
 
+// لو مش موجود
 if(!$receiverData){
-    die("<div class='alert alert-danger m-5'>Error: User not found!</div>");
+    die("<div class='alert alert-danger m-5'>User not found!</div>");
 }
+
 
 // 3. إرسال الرسالة
 if(isset($_POST['send']) && !empty(trim($_POST['message']))){

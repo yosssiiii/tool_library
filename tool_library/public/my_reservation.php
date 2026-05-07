@@ -33,6 +33,8 @@ $myRentals = $resModel->getUserRentals($user_id);
         .bg-active { background: #dbeafe; color: #1e40af; }
         .bg-completed { background: #f1f5f9; color: #475569; }
         .bg-rejected { background: #fee2e2; color: #991b1b; }
+        .status-badge{display:inline-block;margin-bottom:6px;}
+        .btn-sm{font-size: 12px;border-radius: 8px;}
     </style>
 </head>
 <body>
@@ -62,49 +64,110 @@ $myRentals = $resModel->getUserRentals($user_id);
                         </thead>
                         <tbody>
                             <?php if($myRentals->num_rows > 0): ?>
-                                <?php while($row = $myRentals->fetch_assoc()): ?>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <?php $img = !empty($row['photo']) ? "".$row['photo'] : "https://via.placeholder.com/60"; ?>
-                                            <img src="<?php echo $img; ?>" class="tool-thumb me-3">
-                                            <span class="fw-bold"><?php echo htmlspecialchars($row['tool_name']); ?></span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted"><i class="fa fa-user me-1"></i> <?php echo htmlspecialchars($row['owner_name']); ?></small>
-                                    </td>
-                                    <td>
-                                        <div class="small">
-                                            <div><strong>From:</strong> <?php echo $row['start_date']; ?></div>
-                                            <div><strong>To:</strong> <?php echo $row['end_date']; ?></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="fw-bold text-dark">$<?php echo number_format($row['total_price'], 2); ?></span>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge bg-<?php echo $row['payment_status']; ?>">
-                                            <?php echo strtoupper($row['payment_status']); ?>
-                                            <?php if($row['status'] == 'approved'): ?>
-                                            <a href="scan_qr.php?id=<?php echo $row['reservation_id']; ?>" class="btn btn-primary">
-                                                <i class="fa fa-camera"></i> Scan Handover QR
+                            <?php while($row = $myRentals->fetch_assoc()): ?>
+
+                            <tr>
+
+                                <!-- TOOL -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <?php $img = !empty($row['photo']) ? $row['photo'] : "https://via.placeholder.com/60"; ?>
+                                        <img src="<?php echo $img; ?>" class="tool-thumb me-3">
+                                        <span class="fw-bold"><?php echo htmlspecialchars($row['tool_name']); ?></span>
+                                    </div>
+                                </td>
+
+                                <!-- OWNER -->
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="fa fa-user me-1"></i>
+                                        <?php echo htmlspecialchars($row['owner_name']); ?>
+                                    </small>
+                                </td>
+
+                                <!-- DURATION -->
+                                <td>
+                                    <div class="small">
+                                        <div><strong>From:</strong> <?php echo $row['start_date']; ?></div>
+                                        <div><strong>To:</strong> <?php echo $row['end_date']; ?></div>
+                                    </div>
+                                </td>
+
+                                <!-- COST -->
+                                <td>
+                                    <span class="fw-bold text-dark">
+                                        $<?php echo number_format($row['total_price'], 2); ?>
+                                    </span>
+                                </td>
+
+                                <!-- STATUS + ACTIONS -->
+                                <td>
+                                    
+                                    <!-- STATUS -->
+                                    <span class="status-badge bg-<?php echo $row['status']; ?>">
+                                        <?php echo strtoupper($row['status']); ?>
+                                    </span>
+
+                                    <div class="mt-2 d-flex flex-column gap-1">
+
+                                        <!-- Scan -->
+                                        <?php if($row['status'] == 'approved'): ?>
+                                            <a href="scan_qr.php?id=<?= $row['reservation_id'] ?>" 
+                                            class="btn btn-primary btn-sm">
+                                                <i class="fa fa-camera"></i> Scan Handover
                                             </a>
                                         <?php endif; ?>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <?php endwhile; ?>
+
+                                        <!-- Handle Issue (ACTIVE only) -->
+                                        <?php if($row['status'] == 'active'): ?>
+                                            <a href="dispute.php?reservation_id=<?= $row['reservation_id'] ?>" 
+                                            class="btn btn-danger btn-sm">
+                                                ⚠ Handle Issue
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <!-- General Dispute (completed or active) -->
+                                        <?php if(in_array($row['status'], ['active','completed'])): ?>
+                                            <a href="dispute.php?reservation_id=<?= $row['reservation_id'] ?>" 
+                                            class="btn btn-outline-danger btn-sm">
+                                                ⚠ Dispute
+                                            </a>
+                                        <?php endif; ?>
+
+                                    </div>
+                                </td>
+                                <td>
+                                <?php if($row['status'] == 'active'): ?>
+
+                                    <a href="return_tool.php?id=<?= $row['reservation_id'] ?>" 
+                                    class="btn btn-success btn-sm">
+                                        🚚 Return Tool
+                                    </a>
+
+                                <?php endif; ?>
+                                </td>
+                                <td>
+                                <?php if($row['status'] == 'completed'): ?>
+                                    <a href="review.php?reservation_id=<?= $row['reservation_id'] ?>" 
+                                    class="btn btn-warning btn-sm">
+                                        ⭐ Review
+                                    </a>
+                                <?php endif; ?>
+                                </td>
+
+                            </tr>
+
+                            <?php endwhile; ?>
                             <?php else: ?>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
-                                        <i class="fa fa-calendar-xmark fa-3x mb-3"></i>
-                                        <p>You haven't requested any rentals yet.</p>
-                                        <a href="search_tool.php" class="btn btn-primary btn-sm">Browse Tools</a>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="fa fa-calendar-xmark fa-3x mb-3"></i>
+                                    <p>You haven't requested any rentals yet.</p>
+                                    <a href="search_tool.php" class="btn btn-primary btn-sm">Browse Tools</a>
+                                </td>
+                            </tr>
                             <?php endif; ?>
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>

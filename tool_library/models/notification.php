@@ -22,4 +22,20 @@ class Notification {
         $stmt->execute();
         return $stmt->get_result();
     }
-}
+
+
+        public function countUnread(int $userId): int {
+        $stmt = $this->conn->prepare(
+            "SELECT COUNT(*) AS c FROM notifications WHERE user_id = ? AND is_read = 0"
+        );
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['c'];
+    }
+ 
+    public function markAllRead(int $userId): void {
+        $stmt = $this->conn->prepare("UPDATE notifications SET is_read=1 WHERE user_id=?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+    }
+}    

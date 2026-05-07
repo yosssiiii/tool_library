@@ -8,28 +8,98 @@ class Reservation {
     }
 
     // الميثود اللي بتنفذ عملية الحجز
-public function reserve($user_id, $tool_id, $start_date, $end_date, $price_per_day) {
-    
-    // حساب عدد الأيام
-    $date1 = new DateTime($start_date);
-    $date2 = new DateTime($end_date);
-    $days = $date1->diff($date2)->days + 1;
+public function reserve(
+    $user_id,
+    $tool_id,
+    $start_date,
+    $end_date,
+    $total_price,
+    $deposit,
+    $rental_type
+){
 
-    // الحسابات
-    $total_price = $days * $price_per_day;
-    $deposit = $price_per_day * 2; // تأمين يومين
+    /* ================= OVERLAP CHECK ================= */
 
-    // INSERT
-    $sql = "INSERT INTO reservations 
-    (user_id, tool_id, start_date, end_date, total_price, deposit_amount, status, payment_status)
-    VALUES (?, ?, ?, ?, ?, ?, 'pending','pending')";
+    $check = $this->conn->prepare("
+
+        SELECT reservation_id
+
+        FROM reservations
+
+        WHERE tool_id=?
+
+        AND status IN ('pending','approved','active')
+
+        AND (
+            start_date <= ?
+            AND end_date >= ?
+        )
+
+    ");
+
+    $check->bind_param(
+        "iss",
+        $tool_id,
+        $end_date,
+        $start_date
+    );
+
+    $check->execute();
+
+    $result = $check->get_result();
+
+    if($result->num_rows > 0){
+
+        return false;
+
+    }
+
+    /* ================= INSERT ================= */
+
+    $sql = "
+
+        INSERT INTO reservations
+
+        (
+            user_id,
+            tool_id,
+            start_date,
+            end_date,
+            total_price,
+            deposit_amount,
+            rental_type,
+            status,
+            payment_status
+        )
+
+        VALUES
+
+        (
+            ?, ?, ?, ?, ?, ?, ?,
+            'pending',
+            'pending'
+        )
+
+    ";
 
     $stmt = $this->conn->prepare($sql);
-    $stmt->bind_param("iissdd", $user_id, $tool_id, $start_date, $end_date, $total_price, $deposit);
+
+    $stmt->bind_param(
+
+        "iissdds",
+
+        $user_id,
+        $tool_id,
+        $start_date,
+        $end_date,
+        $total_price,
+        $deposit,
+        $rental_type
+
+    );
 
     return $stmt->execute();
 }
-
 
 
 public function getUserRentals($user_id) {

@@ -19,6 +19,8 @@ $tool_name     = $_POST['tool_name'];
 $category      = $_POST['category'];
 $description   = $_POST['description'];
 $price_per_day = $_POST['price_per_day'];
+$price_per_hour = $_POST['price_per_hour'];
+$price_per_week = $_POST['price_per_week'];
 $owner_id      = $_SESSION['user_id'];
 
 /* Upload Image */
@@ -30,21 +32,23 @@ $folder = "uploads/" . time() . "_" . $photo;
 move_uploaded_file($tmp,$folder);
 
 /* Insert */
-$status = "available";
+$availability_status = "pending";
 
 $sql = "INSERT INTO tools
-(owner_id,tool_name,category,description,price_per_day,photo,availability_status)
-VALUES (?,?,?,?,?,?,?)";
+(owner_id,tool_name,category,description,price_per_day,price_per_hour,price_per_week,photo,availability_status)
+VALUES (?,?,?,?,?,?,?,?,?)";
 
 $stmt = $conn->prepare($sql);
 
 $stmt->bind_param(
-"isssdss",
+"isssdddss",
 $owner_id,
 $tool_name,
 $category,
 $description,
 $price_per_day,
+$price_per_hour,
+$price_per_week,
 $folder,
 $availability_status
 );
@@ -135,12 +139,18 @@ required></textarea>
 </div>
 
 <div class="mb-3">
-<label>Price Per Day ($)</label>
-<input type="number"
-step="0.01"
-name="price_per_day"
-class="form-control"
-required>
+<label>Price Per Hour</label>
+<input type="number" step="0.01" name="price_per_hour" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Price Per Day</label>
+<input type="number" step="0.01" name="price_per_day" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Price Per Week</label>
+<input type="number" step="0.01" name="price_per_week" class="form-control">
 </div>
 
 <div class="mb-3">

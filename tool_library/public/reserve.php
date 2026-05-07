@@ -42,19 +42,47 @@ if (!$tool) {
                 <hr>
                 
                 <form action="process_reservation.php" method="POST">
-                    <input type="hidden" name="tool_id" value="<?php echo $tool_id; ?>">
-                    <input type="hidden" name="price_per_day" value="<?php echo $tool['price_per_day']; ?>">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Start Date</label>
-                        <input type="date" name="start_date" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">End Date</label>
-                        <input type="date" name="end_date" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-success w-100 fw-bold py-2">Confirm Reservation Request</button>
+
+                <input type="hidden" name="tool_id" value="<?= $tool_id; ?>">
+
+                <div class="mb-3">
+
+                <label class="form-label">Rental Type</label>
+
+                <select name="rental_type" class="form-select" required id="rentalType">
+
+                    <option value="">Select Type</option>
+
+                    <option value="hour">
+                        Hourly ($<?= $tool['price_per_hour']; ?>)
+                    </option>
+
+                    <option value="day">
+                        Daily ($<?= $tool['price_per_day']; ?>)
+                    </option>
+
+                    <option value="week">
+                        Weekly ($<?= $tool['price_per_week']; ?>)
+                    </option>
+                </select>
+                </div>
+                <div class="mb-3">
+                <label>Start Date</label>
+                <input type="datetime-local"
+                name="start_date"
+                class="form-control"
+                required>
+                </div>
+                <div class="mb-3">
+                <label>End Date</label>
+                <input type="datetime-local"
+                name="end_date"
+                class="form-control"
+                required>
+                </div>
+                <button class="btn btn-success w-100 py-2 fw-bold">
+                Confirm Reservation
+                </button>
                 </form>
             </div>
         </div>

@@ -1,21 +1,17 @@
 <?php
 require_once("../config/Database.php");
-require_once("../models/User.php");
-
+require_once("../models/user.php");
 $db = new Database();
 $conn = $db->connect();
-
 $user = new User($conn);
-
 $message = "";
 
 if(isset($_POST['register'])){
-
-$name     = $_POST['name'];
-$email    = $_POST['email'];
-$password = $_POST['password'];
-$phone    = $_POST['phone'];
-$address  = $_POST['address'];
+$name     = trim($_POST['name']);
+$email    = trim($_POST['email']);
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT); // ✅ BUG1 FIXED: hash the password
+$phone    = trim($_POST['phone']);
+$address  = trim($_POST['address']);
 
 if($user->register($name,$email,$password,$phone,$address)){
     $message = "Account Created Successfully";
@@ -23,6 +19,7 @@ if($user->register($name,$email,$password,$phone,$address)){
     $message = "Something went wrong";
 }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -119,6 +116,7 @@ font-weight:600;
 <div class="mb-3">
 <input type="text" name="address" class="form-control" placeholder="Address" required>
 </div>
+
 
 <div class="d-grid">
 <button type="submit" name="register" class="btn btn-primary btn-custom">

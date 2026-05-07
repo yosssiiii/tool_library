@@ -139,7 +139,6 @@ require_once("../config/Database.php");
             <a href="login.php">Login</a>
             <a href="register.php">Register</a>
         <?php endif; ?>
-        <a href="contact.php">Contact</a>
     </div>
 </nav>
 
